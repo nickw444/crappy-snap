@@ -1,0 +1,16 @@
+{% extends "security/base_security_form.html" %}
+{% block formtitle %}
+Unauthorised
+{% endblock %}
+{% block formsubtitle %}
+You do not have permission to view this page.
+{% endblock %}
+{% block form_content %}
+    {% include "security/_messages.html" %}
+{% endblock %}
+
+{% block form_message %}
+
+{% endblock %}
+
+{% set active_page = active_page|default('unauthorised') -%}

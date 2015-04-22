@@ -1,0 +1,11 @@
+flask
+py-bcrypt
+flask-security
+git+https://github.com/nickw444/flask-sqlalchemy
+flask-classy
+flask-uploads
+flask-boilerplate-utils<0.2.0,>=0.1.0
+flask-boilerplate-buildutils<0.3.0,>=0.2.0
+-e libs/models
+-e libs/config
+git+https://github.com/nickw444/flask-menu.git

@@ -1,0 +1,32 @@
+{% extends 'bases/base_form.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-xs-12 col-sm-6 col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<form method="POST" enctype="multipart/form-data">
+					{{ form.csrf_token }}
+					{{ render_field(form.file_upload) }}
+					{{ render_field(form.submit, class='btn btn-success btn-block') }}
+				</form>	
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-12 col-sm-6 col-md-8">
+		<div class="row">
+		{% for image in image_urls %}
+			<div class="col-xs-6 col-md-3">
+				<div class="thumbnail">
+					<img src="{{ image }}">
+					<div class="caption">
+						<p>{{ image }}</p>
+					</div>
+				</div>
+			</div>
+		{% else %}
+		<p class="text-center">Upload and image it will appear over here.</p>
+		{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}

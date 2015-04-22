@@ -1,0 +1,11 @@
+{% extends 'bases/base_form.html' %}
+{% block content %}
+	<form method="POST">
+		{{ form.csrf_token }}
+		{{ render_field(form.email, class='form-control') }}
+		{{ render_field(form.password, class='form-control') }}
+		{{ render_field(form.active) }}
+		{{ render_field(form.confirmed_at, class='form-control') }}
+		{{ render_field(form.roles, class='form-control') }}
+	</form>
+{% endblock %}

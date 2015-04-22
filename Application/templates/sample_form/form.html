@@ -1,0 +1,11 @@
+{% extends 'bases/base_form.html' %}
+{% block content %}
+	<form method="POST">
+		{{ form.csrf_token }}
+		{{ render_field(form.text, class='form-control') }}
+		{{ render_field(form.number_field, class='form-control') }}
+		{{ render_field(form.password, class='form-control') }}
+		{{ render_field(form.submit, class='btn btn-success') }}
+		{{ render_field(form.toggle, class='btn btn-success') }}
+	</form>
+{% endblock %}

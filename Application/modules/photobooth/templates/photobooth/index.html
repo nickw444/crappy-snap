@@ -1,0 +1,34 @@
+{% extends "photobooth/base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('.static', filename='photobooth/css/normalize.min.css') }}">
+<link href="{{ url_for('.static', filename='photobooth/css/literallycanvas.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('.static', filename='photobooth/css/font-awesome.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('.static', filename='photobooth/css/main.css') }}">
+
+<script src="{{ url_for('.static', filename='photobooth/js/vendor/jquery-1.11.1.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='photobooth/js/vendor/react.js' ) }}"></script>
+<script src="{{ url_for('.static', filename='photobooth/js/vendor/literallycanvas.js' ) }}"></script>
+<script src="{{ url_for('.static', filename='photobooth/js/vendor/buzz.min.js' ) }}"></script>
+<script src="{{ url_for('.static', filename='photobooth/js/main.js' ) }}"></script> 
+<script src="{{ url_for('.static', filename='photobooth/js/preview-init.js' ) }}"></script> 
+
+
+
+{% endblock %}
+{% block body %}
+
+
+<div id="flash"></div>
+<div id="finmsg">Thank you for the message!</div>
+<div id="header"></div>
+<div id="countwrap">
+    <div id="countdown" class="regular">3</div>
+</div>
+<video id="preview" autoplay></video>
+<div id="editor"></div>
+<div id="controls">
+    <ul id="ctul">
+        <li id="snap">Snap (Or Press Any Key) <i class="fa fa-camera-retro"></i></li>
+    </ul>
+</div>
+{% endblock %}

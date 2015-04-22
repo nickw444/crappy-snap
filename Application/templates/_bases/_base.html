@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        {% block seo %}
+            <title>{{ self.page_title() + ' | ' if self.page_title() }}{{ config.APP_NAME }}</title>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+            <meta name="description" content="{{ config.APP_DESCRIPTION }}">
+        {% endblock %}
+        {% block viewport %}
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% endblock %}
+        {% block css %}
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='_vendor/bootstrap/css/bootstrap.min.css') }}">
+            {% if is_form %}
+                {# If this template is rendered with the is_form flag, include some extra form elements. #}
+                <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='_vendor/jasny-bootstrap/css/jasny-bootstrap.min.css') }}">
+                <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='_vendor/bootstrap-select/css/bootstrap-select.min.css') }}">
+                 <style type="text/css">
+                    .btn-file input[type=file] {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    min-width: 100%;
+                    min-height: 100%;
+                    font-size: 100px;
+                    text-align: right;
+                    filter: alpha(opacity=0);
+                    opacity: 0;
+                    outline: none;
+                    background: white;
+                    cursor: inherit;
+                    display: block;
+                }
+                </style>
+            {% endif %}
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='_css/main_global.min.css') }}">
+        {% endblock %}
+
+        {% block js %}
+            <script type="text/javascript" src="{{ url_for('static', filename='_vendor/jquery/jquery.min.js') }}"></script>
+            <script type="text/javascript" src="{{ url_for('static', filename='_vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script type="text/javascript" src="{{ url_for('static', filename='_js/main_global.min.js') }}"></script>
+            {% if is_form %}
+                <script type="text/javascript" src="{{ url_for('static', filename='_vendor/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
+                <script type="text/javascript" src="{{ url_for('static', filename='_vendor/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('.selectpicker').selectpicker();
+                    });
+                </script>
+                {{  csrf_setup() }}
+            {% endif %}
+        {% endblock %}
+    {% endblock %}
+    {# todo fix this #}
+    {% block page_title %}{% endblock %}
+</head>
+<body>
+    {% block body %}
+
+    {% endblock %}
+</body>
+</html>

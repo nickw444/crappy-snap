@@ -1,0 +1,41 @@
+{% extends "_bases/_base.html" %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    .jumbotron ul, .jumbotron ol {
+        font-size: 1.5em;
+        padding-left: 2.5em;
+        font-weight: 300;
+    }
+    </style>
+
+{% endblock %}
+{% block body %}
+    {% block navbar %}
+    <nav class="navbar navbar-inverse navbar-static-top" id="main-navbar">
+        <div class="container">
+            <ul class="nav navbar-nav">
+                {% for item in current_menu.submenu('photobooth').children if item.visible recursive %}
+                    {%- if item.children -%}
+                    <li class='dropdown {{ 'active' if item.active }}'>
+                        <a href="{{ item.url }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ item.text }}<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            {{ loop(item.children) }}
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li {{ 'class=active' if item.active }}>
+                        <a href="{{ item.url }}">{{ item.text }}</a>
+                    </li>
+                    {%- endif -%}
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+    <div class="container">
+    {% block content %}
+
+    {% endblock %}
+    </div>
+{% endblock %}
