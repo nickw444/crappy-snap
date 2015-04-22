@@ -74,7 +74,7 @@ function loadUp(imageTag) {
 //	var imageURL = "booth/originals/1417666582.jpg";
 	var imageURL = "static/captures/" + imageTag;
 	$("#editor").empty();
-	$("#editor").append("<img src='" + imageURL +"' width='100%' />");
+	$("#editor").append("<img src='" + imageURL +"' height='100%' />");
 	$("#editor").css({'background': '#000'})
 	$('#editor').show();
 
