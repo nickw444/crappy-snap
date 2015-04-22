@@ -19,23 +19,7 @@ Boilerplate(app)
 # Setup flask menu
 Menu(app)
 
-# Setup the ORM.
-import models
-app.db = SQLAlchemy(app)
-app.db.register_base(models.Base)
-app.db.create_all()
-
-# Setup Flask-Security
-app.user_datastore = SQLAlchemyUserDatastore(app.db, models.User, models.Role)
-security = Security(app, app.user_datastore)
-mail = Mail(app)
 
 # Register blueprints
 from Application.modules.photobooth import photobooth
 app.register_blueprint(photobooth, url_prefix='')
-
-from .setup import setup_database
-setup_database(app)
-
-from .uploads import setup_uploads
-setup_uploads(app)
