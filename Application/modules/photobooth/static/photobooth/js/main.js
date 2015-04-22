@@ -61,11 +61,11 @@ function loadUp(imageTag) {
 	state = 2
 	sessionID = imageTag;
 	if (imageTag == "") { 
-		// $('body').attr('style', 'text-align: center; color: #FFF; font-size: 48px; padding-top: 180px;');
-		// $('body').html("Camera battery low, camera on fire or bad focus. Please flail your arms <img class='no' src='img/ohno.jpg'/>");
-		$('#controls ul').attr('class','edit');
-		$('#controls ul').html('<li id="retake"><i class="fa fa-refresh"></i> Try Again</li> <li id="finished">Finished! (Any Key) <i class="fa fa-thumbs-o-up"></li>');
-		$('#controls').show();
+		$('body').attr('style', 'text-align: center; color: #FFF; font-size: 48px; padding-top: 180px;');
+		$('body').html("Camera battery low, camera on fire or bad focus. Please flail your arms <img class='no' src='img/ohno.jpg'/>");
+		// $('#controls ul').attr('class','edit');
+		// $('#controls ul').html('<li id="retake"><i class="fa fa-refresh"></i> Try Again</li> <li id="finished">Finished! (Any Key) <i class="fa fa-thumbs-o-up"></li>');
+		// $('#controls').show();
 		setInterval(function() {
 			$('body').toggleClass('flashRed');
 			}, 1000);

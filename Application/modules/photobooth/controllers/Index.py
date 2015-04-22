@@ -21,7 +21,7 @@ class Index(FlaskView):
         if out.decode('UTF-8') != '':
             return filename
 
-        return filename
+        return ''
 
     @route('/delete')
     def delete(self):
