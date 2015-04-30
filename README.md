@@ -10,7 +10,7 @@ It worked all night at my 20th? So yes maybe...
 ## Setting it up
 You'll need some Python 3.4 goodness. It's based on Flask. (Ported from a PHP app by @tiggy). It's based on the Flask-Boilerplate, so you just need to ensure you have pip installed on your machine and you should be good to go. 
 
-** Requires Python 3 / Pip 3 **
+**Requires Python 3 / Pip 3**
 
 ```
 source .env
