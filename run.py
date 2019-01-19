@@ -1,13 +1,19 @@
-#!./.venv/bin/python3
+import logging
+from os import path
 
-from Application import app
-from flask_boilerplate_utils.commands import MainManager
-import ApplicationTests
+from crappy_snap import create_app
 
-manager = MainManager(app,
-    with_default_commands=False, 
-    tests_module=ApplicationTests)
+_LOGGER = logging.getLogger(__name__)
 
-if __name__ == "__main__":
-    manager.run(default_command="server")
 
+def main():
+    logging.basicConfig()
+    logging.getLogger('crappy_snap').setLevel(logging.INFO)
+
+    captures_path = path.abspath('./captures')
+    app = create_app({'CAPTURES_PATH': captures_path})
+    app.run(debug=True)
+
+
+if __name__ == '__main__':
+    main()
