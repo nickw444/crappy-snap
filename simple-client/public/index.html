@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Booth</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div id="camera-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <img id="photo" alt="Captured photo">
+        <div id="review-progress"></div>
+    </div>
+    <div id="countdown">3</div>
+    <div class="controls">
+        <button id="capture-btn">Take Photo</button>
+    </div>
+    <div class="flash"></div>
+    <div id="debug-overlay">
+        <table>
+            <tr><td>Camera:</td><td><select id="camera-select"></select></td></tr>
+            <tr><td>Resolution:</td><td id="debug-resolution">-</td></tr>
+            <tr><td>FPS:</td><td id="debug-fps">-</td></tr>
+            <tr><td>Frame Time:</td><td id="debug-frame-time">-</td></tr>
+            <tr><td>Aspect Ratio:</td><td id="debug-aspect">-</td></tr>
+            <tr><td>Review Time:</td><td><input type="number" id="review-time" min="1" max="10" step="0.5" value="3" style="width: 60px">s</td></tr>
+            <tr><td>Show Button:</td><td><input type="checkbox" id="show-button" checked></td></tr>
+        </table>
+    </div>
+    <div id="error-overlay">Webcam Connection Lost<br>Call for help</div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html> 
