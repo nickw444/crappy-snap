@@ -100,10 +100,10 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 200px;
+    font-size: min(80vh, 1000px);  /* 80% of viewport height, max 1000px */
     font-weight: bold;
     color: white;
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 min(8vh, 60px) rgba(0, 0, 0, 0.5);
     opacity: 0;
     z-index: 100;
     pointer-events: none;
@@ -229,7 +229,7 @@ canvas {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 4px;
+    height: min(1vh, 8px);  /* 1% of viewport height, max 8px */
     background-color: rgba(0, 0, 0, 0.3);
     transform-origin: left;
     transform: scaleX(0);
@@ -239,5 +239,5 @@ canvas {
 
 #review-progress.active {
     background-color: rgba(76, 175, 80, 0.8);
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    box-shadow: 0 0 min(2vh, 16px) rgba(76, 175, 80, 0.5);
 } 

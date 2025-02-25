@@ -504,6 +504,19 @@ async function savePhoto(imageData) {
     return response.json();
 }
 
+// Toggle fullscreen
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
 // Event listeners
 captureButton.addEventListener('click', startCountdownAndCapture);
 document.addEventListener('keydown', (e) => {
@@ -513,6 +526,10 @@ document.addEventListener('keydown', (e) => {
         // Prevent page scroll on space press
         e.preventDefault();
         startCountdownAndCapture();
+    } else if (e.key.toLowerCase() === 'f') {
+        // Toggle fullscreen
+        e.preventDefault();
+        toggleFullscreen();
     }
 });
 cameraSelect.addEventListener('change', handleCameraChange);
