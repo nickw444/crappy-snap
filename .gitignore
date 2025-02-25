@@ -1,5 +1,2 @@
-captures/
-!captures/.gitkeep
-
-.idea
-
+uploads/
+node_modules/
