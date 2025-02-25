@@ -1,6 +1,6 @@
-# Crappy Snap (v3) 📸 📸
+# Crappy Snap (v3, AI generated) 📸 📸
 
-A modern, web-based photo booth application that combines browser-based camera capture with hardware integration for a responsive photo booth experience.
+A modern, web-based photo booth application that combines browser-based camera capture with hardware integration for a responsive photo booth experience. This version (v3) was entirely designed and implemented by the Cursor AI agent, showcasing the capabilities of AI-assisted development.
 
 ## Overview
 
@@ -46,7 +46,7 @@ System Architecture:
 8. Fullscreen mode
 9. Responsive design
 
-## Origina Prompt
+## Original Prompt
 
 > I am creating a  party photo booth application where users will:
 > 
@@ -66,7 +66,7 @@ System Architecture:
 
 ## Limitations Compared to Original crappy-snap
 
-This implementation differs from the [original crappy-snap project](https://github.com/nickw444/crappy-snap/tree/4a36ef86c55dcdf6979d62239c7da82bc7a9237c) in several important ways:
+This implementation differs from the [original crappy-snap project](https://github.com/nickw444/crappy-snap/tree/v2) in several important ways:
 
 **Camera Integration & Image Quality**:
 - Original: Uses gphoto2 to trigger a DSLR camera, capturing full-resolution photos (RAW/high-quality JPEGs) directly from the camera's sensor to SD card
