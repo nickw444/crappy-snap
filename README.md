@@ -1,4 +1,4 @@
-# Simple Photo Booth
+# Crappy Snap (v3) 📸 📸
 
 A modern, web-based photo booth application that combines browser-based camera capture with hardware integration for a responsive photo booth experience.
 
@@ -32,7 +32,7 @@ System Architecture:
 
 ### Sequence Diagram
 
-![Sequence Diagram](./sequence-diagram.png)
+![Sequence Diagram](./docs/sequence.png)
 
 ## Original Requirements
 
