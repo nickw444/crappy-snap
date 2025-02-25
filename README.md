@@ -2,6 +2,8 @@
 
 A modern, web-based photo booth application that combines browser-based camera capture with hardware integration for a responsive photo booth experience. This version (v3) was entirely designed and implemented by the Cursor AI agent, showcasing the capabilities of AI-assisted development.
 
+![Screenshot](./docs/screenshot.png)
+
 ## Overview
 
 The system architecture combines a web interface, WebSocket communication, and hardware integration to create a seamless photo capture system.
