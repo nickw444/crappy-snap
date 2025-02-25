@@ -447,11 +447,18 @@ async function capturePhoto() {
     // Draw current video frame to canvas
     canvas.getContext('2d').drawImage(video, 0, 0);
     
-    // Convert canvas to image
+    // Convert canvas to image but don't show it yet
     const imageData = canvas.toDataURL('image/jpeg', 1.0);
     photo.src = imageData;
-    photo.style.display = 'block';
+    
+    // Ensure the new image is loaded before showing it
+    await new Promise(resolve => {
+        photo.onload = resolve;
+    });
+    
+    // Hide video and show flash simultaneously
     video.style.display = 'none';
+    photo.style.display = 'block';
     isInReviewMode = true;
     
     // Trigger flash effect
