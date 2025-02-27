@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // State
     let photos = [];
+    let sessionId = null;
+    let ws = null;
     
     // Check if device is mobile and has share capability
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -20,6 +22,48 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize gallery
     initGallery();
+    
+    // Initialize WebSocket connection
+    initWebSocket();
+    
+    /**
+     * Initialize WebSocket connection
+     */
+    function initWebSocket() {
+        // Create WebSocket connection
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}`;
+        
+        ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+        
+        ws.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                
+                // Handle new photo message
+                if (message.type === 'new_photo' && message.sessionId === sessionId) {
+                    console.log('New photo notification received, refreshing gallery');
+                    refreshGallery();
+                }
+            } catch (err) {
+                console.error('Error processing WebSocket message:', err);
+            }
+        };
+        
+        ws.onclose = () => {
+            console.log('WebSocket connection closed');
+            // Attempt to reconnect after a delay
+            setTimeout(initWebSocket, 3000);
+        };
+        
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    }
     
     /**
      * Initialize the gallery
@@ -41,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const data = await response.json();
             photos = data.photos || [];
+            sessionId = data.sessionId;
             
             // Show appropriate view based on photo count
             if (photos.length === 0) {
@@ -154,12 +199,78 @@ document.addEventListener('DOMContentLoaded', () => {
      * Refresh the gallery
      */
     function refreshGallery() {
-        loadingEl.classList.remove('hidden');
-        errorEl.classList.add('hidden');
-        emptyEl.classList.add('hidden');
-        galleryEl.classList.add('hidden');
+        // If gallery is already visible, show a subtle loading indicator
+        // instead of hiding the gallery completely
+        if (!galleryEl.classList.contains('hidden')) {
+            galleryEl.classList.add('refreshing');
+        } else {
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            emptyEl.classList.add('hidden');
+        }
         
-        initGallery();
+        // Store current photo count to check if new photos were added
+        const previousPhotoCount = photos.length;
+        
+        // Fetch updated photos
+        fetch(`/api/photos?token=${encodeURIComponent(token)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to refresh gallery');
+                }
+                return response.json();
+            })
+            .then(data => {
+                photos = data.photos || [];
+                
+                // Remove refreshing class
+                galleryEl.classList.remove('refreshing');
+                
+                // Show appropriate view based on photo count
+                if (photos.length === 0) {
+                    galleryEl.classList.add('hidden');
+                    showEmpty();
+                } else {
+                    // If new photos were added, show a notification
+                    if (photos.length > previousPhotoCount && previousPhotoCount > 0) {
+                        showNotification(`${photos.length - previousPhotoCount} new photo${photos.length - previousPhotoCount > 1 ? 's' : ''} added!`);
+                    }
+                    
+                    renderGallery();
+                }
+            })
+            .catch(err => {
+                console.error('Error refreshing gallery:', err);
+                // Don't show error if it's just a refresh - keep showing the old photos
+                if (galleryEl.classList.contains('hidden')) {
+                    showError(err.message || 'Failed to refresh gallery');
+                }
+                galleryEl.classList.remove('refreshing');
+            });
+    }
+    
+    /**
+     * Show a temporary notification
+     * @param {string} message - Message to display
+     */
+    function showNotification(message) {
+        // Create notification element if it doesn't exist
+        let notificationEl = document.getElementById('notification');
+        if (!notificationEl) {
+            notificationEl = document.createElement('div');
+            notificationEl.id = 'notification';
+            notificationEl.className = 'notification';
+            document.body.appendChild(notificationEl);
+        }
+        
+        // Set message and show notification
+        notificationEl.textContent = message;
+        notificationEl.classList.add('show');
+        
+        // Hide notification after 3 seconds
+        setTimeout(() => {
+            notificationEl.classList.remove('show');
+        }, 3000);
     }
     
     // Event listeners

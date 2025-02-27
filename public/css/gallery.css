@@ -365,4 +365,55 @@ body {
 /* Photo action buttons - keeping for reference but not using */
 .photo-action-btn {
     display: none; /* Hide since we're not using them anymore */
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    bottom: calc(20px + var(--safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    padding: 12px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    z-index: 1000;
+    transition: transform 0.3s ease-out;
+    font-weight: 500;
+    text-align: center;
+    max-width: 90%;
+}
+
+.notification.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Gallery refreshing state */
+#gallery.refreshing {
+    position: relative;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+#gallery.refreshing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--primary-color) 0%, 
+        var(--info-color) 50%, 
+        var(--primary-color) 100%);
+    background-size: 200% 100%;
+    animation: loading-gradient 1.5s infinite linear;
+    z-index: 10;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+@keyframes loading-gradient {
+    0% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
 } 

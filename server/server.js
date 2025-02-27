@@ -120,6 +120,17 @@ app.post('/upload', async (req, res) => {
         // Create the gallery URL
         const galleryUrl = `${req.protocol}://${req.get('host')}/gallery?token=${token}`;
         
+        // Notify all connected clients about the new photo
+        connections.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'new_photo',
+                    sessionId: session.id,
+                    filename: filename
+                }));
+            }
+        });
+        
         res.json({ 
             message: 'Photo saved successfully',
             filename: filename,
