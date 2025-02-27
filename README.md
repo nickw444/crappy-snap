@@ -231,4 +231,18 @@ Potential improvements identified:
 7. Email delivery of photos
 8. Custom branding options
 9. Photo filters and effects
-10. Admin interface for session management 
+10. Admin interface for session management
+
+## Security Setup
+
+### Required Environment Variables
+
+For security reasons, the application requires certain environment variables to be set:
+
+1. **JWT_SECRET** (Required): A strong, random string used for signing JWT tokens.
+   ```bash
+   # Set in your environment before running the application
+   export JWT_SECRET=your-secure-random-string
+   ```
+
+> **IMPORTANT**: The application will refuse to start if the JWT_SECRET environment variable is not set. 

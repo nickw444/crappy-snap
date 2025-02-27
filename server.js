@@ -6,8 +6,11 @@ const WebSocket = require('ws');
 const sessionManager = require('./session-manager');
 const qrGenerator = require('./qr-generator');
 
+// Note: This application requires the JWT_SECRET environment variable to be set
+// The session-manager.js file will check for this and exit if it's not set
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Enable CORS and JSON parsing
 app.use(cors());

@@ -3,8 +3,13 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 
-// Secret key for JWT signing - in production, this should be in environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+// Secret key for JWT signing - must be set in environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('ERROR: JWT_SECRET environment variable is not set. This is required for secure operation.');
+    console.error('Please set the JWT_SECRET environment variable with a strong random value.');
+    process.exit(1); // Exit the application if the secret is not set
+}
 
 // Session timeout in milliseconds (2 minutes)
 const SESSION_TIMEOUT = 2 * 60 * 1000;
