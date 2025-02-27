@@ -9,6 +9,10 @@ const qrGenerator = require('./qr-generator');
 // Note: This application requires the JWT_SECRET environment variable to be set
 // The session-manager.js file will check for this and exit if it's not set
 
+// Get base URL from environment variable or use default
+const DEFAULT_BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.BASE_URL || DEFAULT_BASE_URL;
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -118,7 +122,7 @@ app.post('/upload', async (req, res) => {
         // Generate token for the session
         const token = sessionManager.generateToken(session.id);
         // Create the gallery URL
-        const galleryUrl = `${req.protocol}://${req.get('host')}/gallery?token=${token}`;
+        const galleryUrl = `${BASE_URL}/gallery?token=${token}`;
         
         // Notify all connected clients about the new photo
         connections.forEach(client => {

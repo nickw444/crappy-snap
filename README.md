@@ -247,6 +247,22 @@ For security reasons, the application requires certain environment variables to 
 
 > **IMPORTANT**: The application will refuse to start if the JWT_SECRET environment variable is not set.
 
+### Optional Environment Variables
+
+The application also supports the following optional environment variables:
+
+1. **BASE_URL**: The base URL for the gallery links and QR codes. Defaults to 'http://localhost:3000'.
+   ```bash
+   # Example: Set the base URL for production
+   export BASE_URL=https://booth.example.com
+   ```
+
+2. **PORT**: The port on which the server will listen. Defaults to 3000.
+   ```bash
+   # Example: Run the server on port 8080
+   export PORT=8080
+   ```
+
 ## Project Structure
 
 The project is organized as follows:
