@@ -17,10 +17,10 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // Serve static files from the public directory
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
 }
@@ -132,7 +132,7 @@ app.post('/upload', async (req, res) => {
 
 // Gallery page route
 app.get('/gallery', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'gallery.html'));
 });
 
 // API endpoint to get photos for a session

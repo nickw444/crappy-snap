@@ -245,4 +245,19 @@ For security reasons, the application requires certain environment variables to 
    export JWT_SECRET=your-secure-random-string
    ```
 
-> **IMPORTANT**: The application will refuse to start if the JWT_SECRET environment variable is not set. 
+> **IMPORTANT**: The application will refuse to start if the JWT_SECRET environment variable is not set.
+
+## Project Structure
+
+The project is organized as follows:
+
+- `server/` - Contains all server-side JavaScript components:
+  - `server.js` - Main Express server and WebSocket implementation
+  - `session-manager.js` - Handles session creation and management
+  - `qr-generator.js` - Generates QR codes for gallery access
+  - `serial-handler.js` - Handles communication with hardware via serial port
+  - `trigger.js` - Simple utility to trigger photo capture programmatically
+- `public/` - Static web assets (HTML, CSS, client-side JavaScript)
+- `uploads/` - Directory where captured photos are stored
+- `docs/` - Documentation assets
+- `button_handler.ino` - Arduino firmware for ESP8266 hardware button 
