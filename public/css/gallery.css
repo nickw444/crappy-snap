@@ -1,61 +1,180 @@
-/* Base styles */
+/* Base styles with dark mode support */
+:root {
+    /* Light mode colors */
+    --background-color: #f8f9fa;
+    --surface-color: #ffffff;
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --text-color: #212529;
+    --text-secondary-color: #6c757d;
+    --border-color: #e9ecef;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    
+    /* UI properties */
+    --border-radius: 12px;
+    --title-bar-height: 56px;
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode colors */
+        --background-color: #121212;
+        --surface-color: #1e1e1e;
+        --primary-color: #4dabf7;
+        --secondary-color: #adb5bd;
+        --text-color: #f8f9fa;
+        --text-secondary-color: #adb5bd;
+        --border-color: #343a40;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --error-color: #f06595;
+        --success-color: #69db7c;
+        --info-color: #4dabf7;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-    line-height: 1.6;
+html {
+    height: -webkit-fill-available;
 }
 
-.container {
-    max-width: 1200px;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 20px;
+    padding-top: calc(var(--title-bar-height) + var(--safe-area-inset-top));
+    padding-bottom: var(--safe-area-inset-bottom);
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Header styles */
-header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+/* Title bar styles */
+.title-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--title-bar-height) + var(--safe-area-inset-top));
+    padding: var(--safe-area-inset-top) 16px 0;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 1px 3px var(--shadow-color);
 }
 
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 5px;
-    color: #333;
+.title-bar h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
 }
 
-.subtitle {
-    font-size: 1.1rem;
-    color: #666;
+/* We can keep this class for future use, but it's now empty */
+.title-bar-actions {
+    display: none; /* Hide since it's empty */
 }
 
-/* Loading spinner */
-#loading {
+/* Button styles */
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.icon-btn:hover, .icon-btn:focus {
+    background-color: var(--shadow-color);
+}
+
+.action-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    margin-top: 16px;
+}
+
+.action-btn:hover, .action-btn:focus {
+    opacity: 0.9;
+}
+
+.action-btn:active {
+    transform: scale(0.98);
+}
+
+/* Content area */
+.content {
+    flex: 1;
+    padding: 16px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* State containers (loading, error, empty) */
+.state-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
+    text-align: center;
+    min-height: 60vh;
+    padding: 24px;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    margin: 16px 0;
 }
 
+/* Loading spinner */
 .spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(0, 0, 0, 0.1);
+    border: 5px solid var(--border-color);
     border-radius: 50%;
-    border-top-color: #3498db;
+    border-top-color: var(--primary-color);
     animation: spin 1s ease-in-out infinite;
     margin-bottom: 20px;
 }
@@ -65,170 +184,185 @@ header h1 {
 }
 
 /* Error and empty states */
-#error, #empty {
-    text-align: center;
-    padding: 50px 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin: 30px auto;
-    max-width: 600px;
-}
-
 #error i, #empty i {
     font-size: 3rem;
-    color: #e74c3c;
     margin-bottom: 20px;
 }
 
+#error i {
+    color: var(--error-color);
+}
+
 #empty i {
-    color: #3498db;
+    color: var(--info-color);
 }
 
 #error h2, #empty h2 {
     margin-bottom: 15px;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
+/* Add styles for the save hint at the top of the gallery */
+.save-hint {
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    text-align: center;
+    margin: 8px 0 16px;
+    opacity: 0.8;
+}
+
+/* Update the hint class to be more generic */
 .hint {
     font-size: 0.9rem;
-    color: #777;
+    color: var(--text-secondary-color);
     margin-top: 10px;
 }
 
-/* Gallery grid */
+/* Enhanced Gallery grid - single column on mobile */
 #gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
+    grid-template-columns: 1fr; /* Single column for mobile */
+    gap: 24px;
+    margin: 16px 0;
+    width: 100%;
 }
 
 .photo-item {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    background-color: var(--border-color);
+    transition: transform 0.2s ease; /* Keep a short transition just for the active state */
+    margin-bottom: 8px;
     cursor: pointer;
-    transition: transform 0.3s ease;
-    aspect-ratio: 16/9;
-    background-color: #eee;
 }
 
-.photo-item:hover {
-    transform: translateY(-5px);
+/* Remove hover effects */
+.photo-item:hover, .photo-item:focus {
+    /* No transform effect on hover/focus */
+}
+
+.photo-item:active {
+    transform: scale(0.98); /* Keep the subtle scale effect on active/click */
 }
 
 .photo-item img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
+    object-fit: contain;
 }
 
-/* Lightbox */
-#lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+/* Photo actions overlay - removing hover behavior for all viewports */
+.photo-actions {
+    display: none; /* Hide the actions overlay completely */
 }
 
-.lightbox-content {
+/* Remove hover effects that showed the actions */
+.photo-item:hover .photo-actions,
+.photo-item:focus .photo-actions {
+    opacity: 0; /* Ensure it stays hidden */
+}
+
+/* Add a visual cue for tappable photos on all devices */
+.photo-item {
     position: relative;
-    max-width: 90%;
-    max-height: 90%;
+    cursor: pointer;
 }
 
-#lightbox-img {
-    max-width: 100%;
-    max-height: 90vh;
-    display: block;
-    margin: 0 auto;
-    border: 2px solid white;
-}
-
-.nav-btn {
+/* Add download indicator for all devices */
+.photo-item::after {
+    content: '';
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    width: 50px;
-    height: 50px;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px;
+    opacity: 0.8;
+    pointer-events: none;
 }
 
-.nav-btn:hover {
-    background-color: rgba(255, 255, 255, 0.4);
-}
-
-#prev-btn {
-    left: 20px;
-}
-
-#next-btn {
-    right: 20px;
-}
-
-.close-btn {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-    color: #666;
-}
-
-.refresh-hint {
-    font-size: 0.9rem;
-    color: #999;
-    margin-top: 5px;
+/* Remove the mobile-specific styles that were different */
+@media (max-width: 767px) {
+    .photo-item::after {
+        /* Keep the same styling for all devices */
+    }
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+    /* Keep the grid layout for larger screens */
     #gallery {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
     }
     
-    header h1 {
-        font-size: 2rem;
+    /* Make the download icon slightly larger on bigger screens */
+    .photo-item::after {
+        width: 36px;
+        height: 36px;
+        background-size: 22px;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+    #gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 24px;
+    }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    .title-bar {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
     }
     
-    .nav-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
+    .content {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
     }
     
-    #prev-btn {
-        left: 10px;
+    .app-footer {
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Add back the footer styles that were accidentally removed */
+/* Footer - now empty but keeping for structure */
+.app-footer {
+    height: 16px; /* Minimal height since it's now empty */
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.refresh-hint {
+    display: none;
+}
+
+/* Add back the title bar and content styles */
+@media (min-width: 768px) {
+    .title-bar h1 {
+        font-size: 1.5rem;
     }
     
-    #next-btn {
-        right: 10px;
+    .content {
+        padding: 24px;
     }
+}
+
+/* Photo action buttons - keeping for reference but not using */
+.photo-action-btn {
+    display: none; /* Hide since we're not using them anymore */
 } 

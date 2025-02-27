@@ -5,15 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorEl = document.getElementById('error');
     const errorMessageEl = document.getElementById('error-message');
     const emptyEl = document.getElementById('empty');
-    const lightboxEl = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const closeBtn = document.getElementById('close-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
     
     // State
     let photos = [];
-    let currentPhotoIndex = -1;
+    
+    // Check if device is mobile and has share capability
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasShareCapability = navigator.share !== undefined;
     
     // Get token from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -65,11 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
         photos.forEach((photo, index) => {
             const photoItem = document.createElement('div');
             photoItem.className = 'photo-item';
-            photoItem.innerHTML = `<img src="${photo.url}" alt="Photo ${index + 1}" loading="lazy">`;
             
-            // Add click event to open lightbox
+            // Create image element
+            const img = document.createElement('img');
+            img.src = photo.url;
+            img.alt = `Photo ${index + 1}`;
+            img.loading = 'lazy';
+            
+            // Add image to photo item
+            photoItem.appendChild(img);
+            
+            // Add click event - different behavior based on device type
             photoItem.addEventListener('click', () => {
-                openLightbox(index);
+                if (isMobile && hasShareCapability) {
+                    // Mobile with share capability - open share sheet
+                    sharePhoto(photo, index);
+                } else {
+                    // Desktop/tablet or mobile without share - download directly
+                    downloadPhoto(photo, index);
+                }
             });
             
             galleryEl.appendChild(photoItem);
@@ -81,83 +94,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * Open lightbox with a specific photo
-     * @param {number} index - Index of the photo to display
+     * Share a photo if Web Share API is available
+     * @param {Object} photo - Photo object with URL
+     * @param {number} index - Index of the photo
      */
-    function openLightbox(index) {
-        if (index < 0 || index >= photos.length) return;
+    async function sharePhoto(photo, index) {
+        if (!navigator.share) return;
         
-        currentPhotoIndex = index;
-        lightboxImg.src = photos[index].url;
-        lightboxEl.classList.remove('hidden');
-        
-        // Update navigation button states
-        updateNavButtons();
-        
-        // Add swipe gesture support for mobile
-        setupSwipeGestures();
-    }
-    
-    /**
-     * Close the lightbox
-     */
-    function closeLightbox() {
-        lightboxEl.classList.add('hidden');
-        lightboxImg.src = '';
-    }
-    
-    /**
-     * Navigate to the previous photo
-     */
-    function prevPhoto() {
-        if (currentPhotoIndex > 0) {
-            openLightbox(currentPhotoIndex - 1);
+        try {
+            const response = await fetch(photo.url);
+            const blob = await response.blob();
+            const file = new File([blob], `photo-${index + 1}.jpg`, { type: 'image/jpeg' });
+            
+            await navigator.share({
+                title: 'Photo from Crappy Snap',
+                text: 'Check out this photo from Crappy Snap!',
+                files: [file]
+            });
+        } catch (err) {
+            console.error('Error sharing photo:', err);
+            // Fallback to opening the image in a new tab
+            window.open(photo.url, '_blank');
         }
     }
     
     /**
-     * Navigate to the next photo
+     * Download a photo
+     * @param {Object} photo - Photo object with URL
+     * @param {number} index - Index of the photo
      */
-    function nextPhoto() {
-        if (currentPhotoIndex < photos.length - 1) {
-            openLightbox(currentPhotoIndex + 1);
-        }
-    }
-    
-    /**
-     * Update navigation button states based on current photo
-     */
-    function updateNavButtons() {
-        prevBtn.style.visibility = currentPhotoIndex > 0 ? 'visible' : 'hidden';
-        nextBtn.style.visibility = currentPhotoIndex < photos.length - 1 ? 'visible' : 'hidden';
-    }
-    
-    /**
-     * Setup swipe gesture support for the lightbox
-     */
-    function setupSwipeGestures() {
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        lightboxEl.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        lightboxEl.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-        
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            if (touchEndX < touchStartX - swipeThreshold) {
-                // Swipe left, go to next photo
-                nextPhoto();
-            } else if (touchEndX > touchStartX + swipeThreshold) {
-                // Swipe right, go to previous photo
-                prevPhoto();
-            }
-        }
+    function downloadPhoto(photo, index) {
+        const link = document.createElement('a');
+        link.href = photo.url;
+        link.download = `photo-${index + 1}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
     
     /**
@@ -178,32 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyEl.classList.remove('hidden');
     }
     
-    // Event listeners
-    prevBtn.addEventListener('click', prevPhoto);
-    nextBtn.addEventListener('click', nextPhoto);
-    closeBtn.addEventListener('click', closeLightbox);
-    
-    // Close lightbox when clicking outside the image
-    lightboxEl.addEventListener('click', e => {
-        if (e.target === lightboxEl) {
-            closeLightbox();
-        }
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', e => {
-        if (lightboxEl.classList.contains('hidden')) return;
+    /**
+     * Refresh the gallery
+     */
+    function refreshGallery() {
+        loadingEl.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+        emptyEl.classList.add('hidden');
+        galleryEl.classList.add('hidden');
         
-        switch (e.key) {
-            case 'ArrowLeft':
-                prevPhoto();
-                break;
-            case 'ArrowRight':
-                nextPhoto();
-                break;
-            case 'Escape':
-                closeLightbox();
-                break;
-        }
-    });
+        initGallery();
+    }
+    
+    // Event listeners
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', refreshGallery);
+    }
 }); 
