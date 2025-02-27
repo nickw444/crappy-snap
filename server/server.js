@@ -169,13 +169,42 @@ app.get('/api/photos', (req, res) => {
         sessionId: sessionId,
         photos: photos.map(filename => ({
             filename,
-            url: `/uploads/${filename}`
+            url: `/api/photos/${filename}?token=${token}`
         }))
     });
 });
 
-// Serve photos from the uploads directory
-app.use('/uploads', express.static(uploadsDir));
+// Secure route to serve photos with token validation
+app.get('/api/photos/:filename', (req, res) => {
+    const { token } = req.query;
+    const { filename } = req.params;
+    
+    if (!token) {
+        return res.status(400).json({ error: 'Token is required' });
+    }
+    
+    // Verify the token and get the session ID
+    const sessionId = sessionManager.verifyToken(token);
+    
+    if (!sessionId) {
+        return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+    
+    // Verify that the requested photo belongs to the session
+    const sessionPhotos = sessionManager.getSessionPhotos(sessionId, uploadsDir);
+    if (!sessionPhotos.includes(filename)) {
+        return res.status(403).json({ error: 'Access denied to this photo' });
+    }
+    
+    // Serve the photo
+    const photoPath = path.join(uploadsDir, filename);
+    res.sendFile(photoPath, (err) => {
+        if (err) {
+            console.error('Error sending file:', err);
+            res.status(404).json({ error: 'Photo not found' });
+        }
+    });
+});
 
 // Start server
 server.listen(port, () => {
