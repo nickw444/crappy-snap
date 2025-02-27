@@ -3,6 +3,8 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const WebSocket = require('ws');
+const sessionManager = require('./session-manager');
+const qrGenerator = require('./qr-generator');
 
 const app = express();
 const port = 3000;
@@ -28,6 +30,27 @@ const wss = new WebSocket.Server({ server });
 
 // WebSocket connections store
 let connections = new Set();
+
+// Set up session timeout checking
+const SESSION_CHECK_INTERVAL = 10000; // Check every 10 seconds
+setInterval(() => {
+    const expiredSessions = sessionManager.checkExpiredSessions();
+    
+    // Notify clients about expired sessions
+    if (expiredSessions.length > 0) {
+        expiredSessions.forEach(sessionId => {
+            console.log(`Session expired: ${sessionId}`);
+            connections.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ 
+                        type: 'session_timeout', 
+                        sessionId 
+                    }));
+                }
+            });
+        });
+    }
+}, SESSION_CHECK_INTERVAL);
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
@@ -59,15 +82,27 @@ wss.on('connection', (ws) => {
 });
 
 // Handle photo upload
-app.post('/upload', (req, res) => {
+app.post('/upload', async (req, res) => {
     const { imageData } = req.body;
     
     // Remove the data URL prefix to get just the base64 data
     const base64Data = imageData.replace(/^data:image\/jpeg;base64,/, '');
     
-    // Generate filename with timestamp
-    const filename = `photo_${new Date().toISOString().replace(/:/g, '-')}.jpg`;
+    // Generate filename with session ID and sequence number
+    const filename = sessionManager.generatePhotoFilename();
     const filepath = path.join(uploadsDir, filename);
+    
+    // Get the current session
+    const session = sessionManager.getOrCreateSession();
+    
+    // Generate QR code for the session
+    let qrCodeDataUrl;
+    try {
+        qrCodeDataUrl = await qrGenerator.generateQRCodeForSession(session.id);
+    } catch (err) {
+        console.error('Error generating QR code:', err);
+        qrCodeDataUrl = null;
+    }
     
     // Save the file
     fs.writeFile(filepath, base64Data, 'base64', (err) => {
@@ -77,12 +112,56 @@ app.post('/upload', (req, res) => {
             return;
         }
         
+        // Generate token for the session
+        const token = sessionManager.generateToken(session.id);
+        // Create the gallery URL
+        const galleryUrl = `${req.protocol}://${req.get('host')}/gallery?token=${token}`;
+        
         res.json({ 
             message: 'Photo saved successfully',
-            filename: filename
+            filename: filename,
+            sessionId: session.id,
+            qrCodeDataUrl: qrCodeDataUrl,
+            galleryUrl: galleryUrl
         });
     });
 });
+
+// Gallery page route
+app.get('/gallery', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
+});
+
+// API endpoint to get photos for a session
+app.get('/api/photos', (req, res) => {
+    const { token } = req.query;
+    
+    if (!token) {
+        return res.status(400).json({ error: 'Token is required' });
+    }
+    
+    // Verify the token and get the session ID
+    const sessionId = sessionManager.verifyToken(token);
+    
+    if (!sessionId) {
+        return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+    
+    // Get all photos for the session
+    const photos = sessionManager.getSessionPhotos(sessionId, uploadsDir);
+    
+    // Return the photo list
+    res.json({
+        sessionId: sessionId,
+        photos: photos.map(filename => ({
+            filename,
+            url: `/uploads/${filename}`
+        }))
+    });
+});
+
+// Serve photos from the uploads directory
+app.use('/uploads', express.static(uploadsDir));
 
 // Start server
 server.listen(port, () => {

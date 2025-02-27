@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery</title>
+    <link rel="stylesheet" href="/css/gallery.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Photo Gallery</h1>
+            <p class="subtitle">Your photos from the photo booth</p>
+        </header>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Loading your photos...</p>
+        </div>
+
+        <div id="error" class="hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <h2>Oops! Something went wrong</h2>
+            <p id="error-message">Unable to load your photos. The link may be invalid or expired.</p>
+        </div>
+
+        <div id="empty" class="hidden">
+            <i class="fas fa-camera"></i>
+            <h2>No Photos Found</h2>
+            <p>There are no photos available in this session yet.</p>
+            <p class="hint">Photos will appear here shortly after they are taken.</p>
+        </div>
+
+        <div id="gallery" class="hidden">
+            <!-- Photos will be added here dynamically -->
+        </div>
+
+        <div id="lightbox" class="hidden">
+            <div class="lightbox-content">
+                <img id="lightbox-img" src="" alt="Enlarged photo">
+                <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                <button id="close-btn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Tap and hold on any photo to save it to your device</p>
+            <p class="refresh-hint">Refresh the page to see new photos</p>
+        </footer>
+    </div>
+
+    <script src="/js/gallery.js"></script>
+</body>
+</html> 

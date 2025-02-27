@@ -6,7 +6,7 @@ A modern, web-based photo booth application that combines browser-based camera c
 
 ## Overview
 
-The system architecture combines a web interface, WebSocket communication, and hardware integration to create a seamless photo capture system.
+The system architecture combines a web interface, WebSocket communication, and hardware integration to create a seamless photo capture system with session-based photo access.
 
 ```
 System Architecture:
@@ -24,12 +24,17 @@ System Architecture:
 │  Media Capture  │          │   File System   │         │    ESP8266      │
 │   (getUserMedia)│          │   (Photo Store) │         │    (Firmware)   │
 └─────────────────┘          └─────────────────┘         └─────────────────┘
-                                                                 │
-                                                                 │
-                                                         ┌───────┴─────────┐
-                                                         │  Physical       │
-                                                         │  Button         │
-                                                         └─────────────────┘
+                                    │                              │
+                                    │                              │
+                             ┌──────┴──────┐                ┌──────┴──────┐
+                             │  Session    │                │  Physical   │
+                             │  Management │                │  Button     │
+                             └──────┬──────┘                └─────────────┘
+                                    │
+                             ┌──────┴──────┐
+                             │  QR Code    │
+                             │  Gallery    │
+                             └─────────────┘
 ```
 
 ### Sequence Diagram
@@ -47,6 +52,14 @@ System Architecture:
 7. Support for multiple cameras
 8. Fullscreen mode
 9. Responsive design
+
+## New Features
+
+10. Session-based photo access
+11. QR code generation for easy mobile access
+12. Secure gallery access with JWT authentication
+13. Responsive gallery page with lightbox view
+14. Session timeout after 2 minutes of inactivity
 
 ## Original Prompt
 
@@ -96,6 +109,10 @@ Despite these limitations, this implementation offers advantages in simplicity, 
   - On-screen button
 - **Responsive Design**: Scales appropriately for different screen sizes
 - **Visual Feedback**: Flash effect and large countdown display
+- **Session Management**: Groups photos into sessions with 2-minute timeout
+- **QR Code Access**: Generates QR codes for easy mobile access to photos
+- **Secure Gallery**: JWT-authenticated access to session photos
+- **Mobile-Friendly Gallery**: Responsive design with swipe gestures and lightbox
 
 ## Technical Implementation
 
@@ -105,12 +122,16 @@ Despite these limitations, this implementation offers advantages in simplicity, 
 - WebSocket for real-time communication
 - CSS animations for visual effects
 - Responsive design using viewport units
+- Touch-friendly gallery with swipe gestures
 
 ### Backend (Node.js)
 - Express.js for web server
 - WebSocket for real-time communication
 - Serial port handling for ESP8266 integration
 - File system management for photo storage
+- JWT for secure gallery access
+- QR code generation for mobile access
+- Session management with timeout
 
 ### Hardware Interface (ESP8266)
 - Simple serial protocol
@@ -139,6 +160,11 @@ npm start
 npm run serial
 ```
 
+5. Access the photo booth:
+```
+http://localhost:3000
+```
+
 ## Controls
 
 - `Space`: Take photo
@@ -155,6 +181,31 @@ Debug overlay (`D` key) provides access to:
 - Button visibility toggle
 - Real-time statistics
 
+## Session-Based Photo Access
+
+The application now features a session-based photo access system:
+
+1. **Session Creation**: A new session is created when:
+   - The application starts
+   - After 2 minutes of inactivity
+   - When the first photo is taken
+
+2. **QR Code Display**: 
+   - A QR code is displayed during the review period
+   - The QR code remains visible until the session times out
+   - The QR code is clickable for desktop testing
+
+3. **Gallery Access**:
+   - Scanning the QR code opens a mobile-friendly gallery
+   - Photos are grouped by session
+   - Gallery access is secured with JWT authentication
+   - The gallery link remains valid for 7 days
+
+4. **Session Timeout**:
+   - Sessions expire after 2 minutes of inactivity
+   - When a session expires, the QR code is hidden
+   - A new session is created when the next photo is taken
+
 ## Technical Notes
 
 - Uses internal pull-up resistor on ESP8266
@@ -163,6 +214,10 @@ Debug overlay (`D` key) provides access to:
 - Supports hot-plugging of ESP8266
 - Persists settings in localStorage
 - Automatically reconnects to selected camera
+- JWT tokens expire after 7 days
+- QR codes use error correction level M
+- Session IDs are generated using UUID v4
+- Photos are named with session ID and sequence number
 
 ## Future Enhancements
 
@@ -170,8 +225,10 @@ Potential improvements identified:
 1. Multiple button support
 2. LED feedback
 3. Sound effects
-4. Gallery view
-5. Social sharing
-6. Print integration
-7. Custom overlays
-8. Session management 
+4. Social sharing
+5. Print integration
+6. Custom overlays
+7. Email delivery of photos
+8. Custom branding options
+9. Photo filters and effects
+10. Admin interface for session management 

@@ -15,6 +15,8 @@ const cameraSelect = document.getElementById('camera-select');
 const reviewTimeInput = document.getElementById('review-time');
 const showButtonInput = document.getElementById('show-button');
 const reviewProgress = document.getElementById('review-progress');
+const qrCodeContainer = document.getElementById('qr-code-container');
+const qrCodeElement = document.getElementById('qr-code');
 
 // Debug state
 let isDebugVisible = localStorage.getItem('debugVisible') === 'true';
@@ -70,6 +72,10 @@ const constraints = {
 let ws;
 let wsReconnectTimer;
 
+// Session state
+let currentSessionId = null;
+let sessionGalleryUrl = null;
+
 // Initialize WebSocket connection
 function initWebSocket() {
     // Close existing connection if any
@@ -102,7 +108,16 @@ function initWebSocket() {
     ws.onmessage = (event) => {
         try {
             const message = JSON.parse(event.data);
-            if (message.type === 'trigger' && !captureButton.disabled) {
+            
+            // Handle session timeout message
+            if (message.type === 'session_timeout' && message.sessionId === currentSessionId) {
+                // Hide QR code when session times out
+                qrCodeContainer.style.display = 'none';
+                currentSessionId = null;
+                sessionGalleryUrl = null;
+            }
+            // Handle trigger message
+            else if (message.type === 'trigger' && !captureButton.disabled) {
                 startCountdownAndCapture();
             }
         } catch (err) {
@@ -406,6 +421,9 @@ function endReviewMode() {
         reviewProgress.style.transition = 'none';
         reviewProgress.style.transform = 'scaleX(0)';
         reviewProgress.classList.remove('active');
+        
+        // Note: We no longer hide the QR code here
+        // The QR code will remain visible until the session times out
     }
 }
 
@@ -501,7 +519,34 @@ async function savePhoto(imageData) {
         throw new Error('Failed to save photo');
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Update session information
+    currentSessionId = result.sessionId;
+    sessionGalleryUrl = result.galleryUrl;
+    
+    // Display QR code if available
+    if (result.qrCodeDataUrl) {
+        displayQRCode(result.qrCodeDataUrl, result.galleryUrl);
+    }
+    
+    return result;
+}
+
+// Display QR code
+function displayQRCode(dataUrl, galleryUrl) {
+    // Create image element for QR code with a link wrapper
+    const qrLink = document.createElement('a');
+    qrLink.href = galleryUrl;
+    qrLink.target = '_blank'; // Open in new tab
+    qrLink.innerHTML = `<img src="${dataUrl}" alt="QR Code">`;
+    
+    // Clear previous content and add the new linked QR code
+    qrCodeElement.innerHTML = '';
+    qrCodeElement.appendChild(qrLink);
+    
+    // Show QR code container
+    qrCodeContainer.style.display = 'block';
 }
 
 // Toggle fullscreen

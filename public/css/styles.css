@@ -240,4 +240,51 @@ canvas {
 #review-progress.active {
     background-color: rgba(76, 175, 80, 0.8);
     box-shadow: 0 0 min(2vh, 16px) rgba(76, 175, 80, 0.5);
+}
+
+#qr-code-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 25%;
+    max-width: 200px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#qr-code-container p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+#qr-code {
+    width: 100%;
+    height: auto;
+}
+
+#qr-code a {
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#qr-code a:hover {
+    transform: scale(1.05);
+}
+
+#qr-code a:active {
+    transform: scale(0.95);
+}
+
+#qr-code img {
+    width: 100%;
+    height: auto;
+    display: block;
 } 
