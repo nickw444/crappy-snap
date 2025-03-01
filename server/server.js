@@ -20,8 +20,23 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// Return 404 for root path to make it harder to discover
+app.get('/', (req, res) => {
+    res.status(404).send('Not Found');
+});
+
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Add route for /cam/ path to serve index.html
+app.get('/cam', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+// Add route for /cam/ path with trailing slash to serve index.html
+app.get('/cam/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, '..', 'uploads');
